@@ -5,9 +5,10 @@ import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 
 /**
- * One message: MiniMessage text with [runtime arguments](Argument). Without arguments the
- * component was parsed when the file was read and is returned as it is; with arguments the text
- * is parsed for the call.
+ * One message: MiniMessage text with [runtime arguments](Argument) in braces. A message that
+ * refers to no argument was parsed when the file was read and is returned as it is; one with
+ * arguments is parsed for the call, and asking for it without them fails with the first missing
+ * argument.
  */
 interface Message {
     /** The dotted key, `shop.bought`. */
