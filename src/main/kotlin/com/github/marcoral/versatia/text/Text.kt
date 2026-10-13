@@ -1,0 +1,41 @@
+package com.github.marcoral.versatia.text
+
+import kotlin.reflect.KClass
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
+
+/**
+ * Turns MiniMessage text with runtime [Argument]s into components: angle brackets are MiniMessage
+ * formatting, braces are data. Every plugin gets its own instance by injecting this type: what it
+ * registers with [present] and [tag] is visible to that plugin alone and disappears with it. See
+ * README.md.
+ */
+interface Text {
+    /** The MiniMessage behind [parse]: the standard tags, nothing else. */
+    val miniMessage: MiniMessage
+
+    /**
+     * Parses [input], where `{name}` inserts an argument and `{name.property}` one of its
+     * properties. A brace naming an argument that was not given, or a property the value does not
+     * have, fails the call with a [TextException]; braces around anything else are plain text.
+     */
+    fun parse(input: String, vararg arguments: Argument): Component
+
+    /** The names of the arguments [input] refers to, so a caller can tell whether it needs any. */
+    fun argumentNames(input: String): Set<String>
+
+    /**
+     * Teaches this instance how values of [type] appear in text. A value that is [Presentable]
+     * describes itself and wins; otherwise the registered type nearest to the value's class is
+     * used, the module's built-in ones last. Registering a type again replaces its presentation.
+     */
+    fun <T : Any> present(type: KClass<T>, presenter: (T) -> Presentation)
+
+    /**
+     * Adds a MiniMessage tag, `<name:...>`, resolved with the arguments of the call in hand, such as
+     * a placeholder bridge. Tags are the one thing in angle brackets that may read arguments.
+     */
+    fun tag(name: String, tag: ArgumentTag)
+}
+
+inline fun <reified T : Any> Text.present(noinline presenter: (T) -> Presentation) = present(T::class, presenter)

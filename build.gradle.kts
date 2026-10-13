@@ -9,10 +9,9 @@ plugins {
 group = "com.github.marcoral.versatia"
 version = "0.0.1"
 
-// Messages take Text arguments, so the Text module API is exported to consumers; Adventure comes with the Paper API
+// Only Adventure (part of the Paper API) is needed; plugins have VersatiaAPI and Paper on their classpath already
 dependencies {
     compileOnlyApi("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    api("com.github.marcoral.versatia:VersatiaModule-Text:0.0.1")
     api(kotlin("stdlib"))
 }
 
