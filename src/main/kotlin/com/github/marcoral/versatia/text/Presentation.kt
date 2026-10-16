@@ -23,15 +23,11 @@ class PresentationBuilder internal constructor() {
     }
 
     fun property(name: String, value: () -> Any?) {
-        require(PROPERTY_NAME.matches(name)) { "\"$name\" cannot name a property: letters, digits, _ and - only" }
+        require(NAME.matches(name)) { "\"$name\" cannot name a property: letters, digits, _ and - only" }
         properties[name] = value
     }
 
     internal fun build() = Presentation(component, properties)
-
-    private companion object {
-        val PROPERTY_NAME = Regex("[A-Za-z0-9_-]+")
-    }
 }
 
 fun presentation(build: PresentationBuilder.() -> Unit) = PresentationBuilder().apply(build).build()

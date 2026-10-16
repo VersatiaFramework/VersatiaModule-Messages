@@ -39,6 +39,10 @@ interface Message {
 
     fun send(audience: Audience, vararg arguments: Argument) = audience.sendMessage(get(*arguments))
 
-    /** Sends to every online player and the console. */
+    /**
+     * Sends to the console and every online player with the permission `bukkit.broadcast.user`, which
+     * players have unless a permission plugin revokes it, through `Server.broadcast`; that fires a
+     * cancellable `BroadcastMessageEvent`.
+     */
     fun broadcast(vararg arguments: Argument)
 }

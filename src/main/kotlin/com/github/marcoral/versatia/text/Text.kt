@@ -7,8 +7,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 /**
  * Turns MiniMessage text with runtime [Argument]s into components: angle brackets are MiniMessage
  * formatting, braces are data. Every plugin gets its own instance by injecting this type: what it
- * registers with [present] and [tag] is visible to that plugin alone and disappears with it. See
- * README.md.
+ * registers with [present] and [tag] is visible to that plugin alone and disappears with it.
+ * Registering and parsing are safe on any thread, but the built-in presentations read Bukkit state
+ * (`{player.location}`, `{world.players}`), which is safe on the main thread only.
+ * See https://versatiaframework.github.io/VersatiaDocs/docs/modules/messages.
  */
 interface Text {
     /** The MiniMessage behind [parse]: the standard tags, nothing else. */

@@ -18,7 +18,7 @@ half, the library plugins compile against, nothing that runs, in two packages:
 | Package                                 | What it holds                                                    |
 |-----------------------------------------|------------------------------------------------------------------|
 | `com.github.marcoral.versatia.messages` | the bank: `Messages`, `Message` and their exceptions             |
-| `com.github.marcoral.versatia.text`     | the parser: `Text`, `Argument` and `arg()`, `Presentation` and `Presentable`, `ArgumentTag` and their exceptions |
+| `com.github.marcoral.versatia.text`     | the parser: `Text`, `Argument` and `arg()`, `Presentation`, `presentation {}` and `Presentable`, `ArgumentTag` and `Arguments`, `TextException` and its subclasses |
 
 `text` knows nothing of `messages`; messages only take its arguments. The implementation, the
 plugin installed on the server as `VersatiaModule-Messages`, lives in the private repository
@@ -32,6 +32,8 @@ VersatiaModule-MessagesImpl; its JAR carries these classes, so a plugin never bu
   `<insert:{player.name}>`, `<color:{c}>`. An unquoted argument holding a brace is quoted. Hover
   text (`<hover:show_text:'...'>`), which MiniMessage parses again, keeps the component.
 - A presentation registered with `Text.present` applies to strings and numbers as well.
+- `Text` may be used and extended from any thread; the built-in presentations read Bukkit state
+  (`{player.location}`, `{world.players}`), which is safe on the main thread only.
 - Built in, besides players, entities, items, locations and worlds: any value that is Adventure's
   `Translatable` (`Material`, `EntityType`, `GameMode`, `Enchantment`, `PotionEffectType`, ...)
   inserts a translatable component, shown in the viewer's language; a more specific presentation,
