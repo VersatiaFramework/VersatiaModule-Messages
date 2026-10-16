@@ -20,6 +20,8 @@ interface Text {
      * Parses [input], where `{name}` inserts an argument and `{name.property}` one of its
      * properties. A brace naming an argument that was not given, or a property the value does not
      * have, fails the call with a [TextException]; braces around anything else are plain text.
+     * A backslash escapes a brace, as MiniMessage's `\<` escapes a tag: `\{nick}` shows `{nick}`,
+     * in the text and inside tag arguments, while `\\{nick}` is a backslash and the argument.
      *
      * In the text a brace inserts the value's component. Inside an argument of a tag, where
      * MiniMessage reads a plain string, `<click:suggest_command:'/msg {player.name} '>`,
@@ -33,7 +35,7 @@ interface Text {
      */
     fun parse(input: String, vararg arguments: Argument): Component
 
-    /** The names of the arguments [input] refers to, so a caller can tell whether it needs any. */
+    /** The names of the arguments [input] refers to, escaped braces aside, so a caller can tell whether it needs any. */
     fun argumentNames(input: String): Set<String>
 
     /**

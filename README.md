@@ -31,6 +31,9 @@ VersatiaModule-MessagesImpl; its JAR carries these classes, so a plugin never bu
   can neither end the argument nor open a tag: `<click:suggest_command:'/msg {player.name} '>`,
   `<insert:{player.name}>`, `<color:{c}>`. An unquoted argument holding a brace is quoted. Hover
   text (`<hover:show_text:'...'>`), which MiniMessage parses again, keeps the component.
+- A backslash escapes a brace, as MiniMessage's `\<` escapes a tag: `\{nick}` shows `{nick}`, in
+  the text and inside tag arguments, and `\\{nick}` is a backslash followed by the argument.
+  `Text.argumentNames` skips escaped braces.
 - A presentation registered with `Text.present` applies to strings and numbers as well.
 - `Text` may be used and extended from any thread; the built-in presentations read Bukkit state
   (`{player.location}`, `{world.players}`), which is safe on the main thread only.
@@ -50,6 +53,11 @@ VersatiaModule-MessagesImpl; its JAR carries these classes, so a plugin never bu
   are. A key defined twice, in one file or in two, a key that is a message in one place and a group
   of messages in another (`shop: "..."` beside `shop: { open: "..." }`), a list holding anything but
   text lines, and a file that is not UTF-8 fail the load (`MessagesLoadException`).
+- A message with legacy colour codes (`&a`, `§l`, which MiniMessage shows as text) is logged as one
+  warning through the plugin's logger at every load, naming the key, the file and the tags to use
+  (`&a -> <green>`). A code counts when no letter or digit precedes it, other codes aside, so
+  `&a&lSale` warns and `R&D` does not. `legacy-color-warnings: false` in `messages/.versatia.yml`
+  turns it off; files whose names start with a dot hold no messages.
 
 ## Using it
 

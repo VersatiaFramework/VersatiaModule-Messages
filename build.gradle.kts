@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+// Literal versions, kept equal to VersatiaCatalog: this module builds without any Versatia artifact (CI builds it alone)
 plugins {
     kotlin("jvm") version "2.4.20"
     `java-library`
