@@ -18,6 +18,16 @@ interface Text {
      * Parses [input], where `{name}` inserts an argument and `{name.property}` one of its
      * properties. A brace naming an argument that was not given, or a property the value does not
      * have, fails the call with a [TextException]; braces around anything else are plain text.
+     *
+     * In the text a brace inserts the value's component. Inside an argument of a tag, where
+     * MiniMessage reads a plain string, `<click:suggest_command:'/msg {player.name} '>`,
+     * `<insert:{player.name}>`, `<color:{c}>`, it inserts the value's plain text, escaped for the
+     * argument's quotes, so a value can neither end the argument nor open a tag; an unquoted
+     * argument holding a brace is quoted. The text of `<hover:show_text:...>`, which MiniMessage
+     * parses again, keeps the component.
+     *
+     * A text without braces and without tags registered with [tag] gives the same component every
+     * time, so it is parsed once and reused until a tag is registered.
      */
     fun parse(input: String, vararg arguments: Argument): Component
 
@@ -27,7 +37,8 @@ interface Text {
     /**
      * Teaches this instance how values of [type] appear in text. A value that is [Presentable]
      * describes itself and wins; otherwise the registered type nearest to the value's class is
-     * used, the module's built-in ones last. Registering a type again replaces its presentation.
+     * used, the module's built-in ones last; this holds for strings and numbers too. Registering a
+     * type again replaces its presentation.
      */
     fun <T : Any> present(type: KClass<T>, presenter: (T) -> Presentation)
 

@@ -24,6 +24,31 @@ half, the library plugins compile against, nothing that runs, in two packages:
 plugin installed on the server as `VersatiaModule-Messages`, lives in the private repository
 VersatiaModule-MessagesImpl; its JAR carries these classes, so a plugin never bundles them.
 
+## How text is read
+
+- In the text a brace inserts the value's component. Inside a tag argument, which MiniMessage reads
+  as a plain string, it inserts the value's plain text, escaped for the argument's quotes, so a value
+  can neither end the argument nor open a tag: `<click:suggest_command:'/msg {player.name} '>`,
+  `<insert:{player.name}>`, `<color:{c}>`. An unquoted argument holding a brace is quoted. Hover
+  text (`<hover:show_text:'...'>`), which MiniMessage parses again, keeps the component.
+- A presentation registered with `Text.present` applies to strings and numbers as well.
+- Built in, besides players, entities, items, locations and worlds: any value that is Adventure's
+  `Translatable` (`Material`, `EntityType`, `GameMode`, `Enchantment`, `PotionEffectType`, ...)
+  inserts a translatable component, shown in the viewer's language; a more specific presentation,
+  such as `Player` or `ItemStack`, wins. A collection or array inserts its elements, each in its own
+  presentation, joined with `, `, and has the property `size`.
+- Messages are parsed when used, never when the files are read, so tags registered later apply.
+  A text without braces and without registered tags is parsed once and reused until a tag is
+  registered; a text using a registered tag is parsed at every use. A failure names the key and
+  the file (`MessageRenderException`).
+- A YAML list is a message of several lines, each parsed on its own, so formatting does not carry
+  over to the next line. `Message.lines()` gives one component per line (item lore); `get()`,
+  `send()` and `broadcast()` join them with line breaks.
+- Every YAML scalar is text exactly as written: `Yes`, `off`, `1.10` or a key `no:` stay as they
+  are. A key defined twice, in one file or in two, a key that is a message in one place and a group
+  of messages in another (`shop: "..."` beside `shop: { open: "..." }`), a list holding anything but
+  text lines, and a file that is not UTF-8 fail the load (`MessagesLoadException`).
+
 ## Using it
 
 ```kotlin

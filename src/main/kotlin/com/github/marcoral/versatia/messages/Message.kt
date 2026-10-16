@@ -5,10 +5,13 @@ import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 
 /**
- * One message: MiniMessage text with [runtime arguments](Argument) in braces. A message that
- * refers to no argument was parsed when the file was read and is returned as it is; one with
- * arguments is parsed for the call, and asking for it without them fails with the first missing
- * argument.
+ * One message: MiniMessage text with [runtime arguments](Argument) in braces, parsed when it is
+ * used, never when the file is read, so tags registered later apply. A text without braces and
+ * without registered tags is parsed once and then reused. Any failure, such as a brace naming an
+ * argument the call did not pass, is a [MessageRenderException] naming the key and the file.
+ *
+ * A YAML list is a message of several lines, each parsed on its own, so formatting never carries
+ * over to the next line; [lines] gives them apart, [get] joined with line breaks.
  */
 interface Message {
     /** The dotted key, `shop.bought`. */
@@ -23,6 +26,16 @@ interface Message {
     fun get(): Component
 
     fun get(vararg arguments: Argument): Component
+
+    /**
+     * One component per line, one in all for a message that is a single text; for item lore and
+     * other places that take lines:
+     *
+     * ```kotlin
+     * meta.lore(messages["sword-lore"].lines(arg("damage", 7)))
+     * ```
+     */
+    fun lines(vararg arguments: Argument): List<Component>
 
     fun send(audience: Audience, vararg arguments: Argument) = audience.sendMessage(get(*arguments))
 
